@@ -582,6 +582,10 @@ impl VimCompleteItem {
         complete_position: Option<u64>,
     ) -> Fallible<VimCompleteItem> {
         let abbr = lspitem.label.clone();
+        let new_text = match lspitem.text_edit.clone() {
+            Some(text_edit) => text_edit.new_text,
+            None => lspitem.label.clone()
+        };
         let mut word = lspitem.insert_text.clone().unwrap_or_default();
         if word.is_empty() {
             match (lspitem.text_edit.clone(), complete_position) {
@@ -602,7 +606,7 @@ impl VimCompleteItem {
                     word = text_edit.new_text.clone();
                 }
                 (_, _) => {
-                    word = lspitem.label.clone();
+                    word = new_text;
                 }
             }
         }
